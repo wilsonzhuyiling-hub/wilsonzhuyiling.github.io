@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yiling Zhu — Holographic Dark Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@300;400;500&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #020408;
+  --deep: #060d16;
+  --horizon: #0a1628;
+  --stellar: #e8f0fa;
+  --dim: #a0bcdc;
+  --accent: #7dd4ff;
+  --gold: #c8a96e;
+  --pulse: #b0e0ff;
+  --green: #64dc96;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--void);
+  color: var(--stellar);
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* STARFIELD */
+#starfield {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(2,4,8,0.95), transparent);
+}
+
+.nav-explore {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(125,212,255,0.3);
+  padding: 0.4rem 1rem;
+  border-radius: 2px;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+.nav-explore:hover { background: rgba(125,212,255,0.08); }
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--dim);
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* HERO */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 5rem 2rem 1.5rem;
+}
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.15;
+  color: var(--stellar);
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.6s forwards;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+
+.hero-subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--dim);
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.9s forwards;
+}
+
+/* EQUATION BLOCKS */
+.hero-equations {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1s 1.1s forwards;
+}
+
+.eq-card {
+  background: rgba(10,22,40,0.7);
+  border: 1px solid rgba(125,212,255,0.2);
+  border-radius: 4px;
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s, transform 0.3s;
+  min-width: 200px;
+}
+.eq-card:hover {
+  border-color: rgba(125,212,255,0.5);
+  transform: translateY(-2px);
+}
+.eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.eq-formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--stellar);
+}
+.eq-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-top: 0.25rem;
+}
+
+/* ZENODO BUTTON */
+.zenodo-btn-wrap {
+  opacity: 0;
+  animation: fadeUp 1s 1.3s forwards;
+  margin-bottom: 2rem;
+}
+
+.zenodo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border: 1px solid rgba(125,212,255,0.35);
+  padding: 0.7rem 1.8rem;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s;
+}
+.zenodo-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(125,212,255,0.08), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.zenodo-btn:hover::before { transform: translateX(100%); }
+.zenodo-btn:hover { border-color: rgba(125,212,255,0.7); }
+.zenodo-btn-arrow { font-size: 1rem; }
+
+/* SCROLL INDICATOR */
+.hero-scroll {
+  opacity: 0;
+  animation: fadeUp 1s 1.5s forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.scroll-line {
+  width: 1px;
+  height: 25px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: scrollPulse 2s infinite;
+}
+
+/* SECTION BASE */
+section {
+  position: relative;
+  z-index: 1;
+  padding: 5rem 2rem;
+}
+.container { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.25;
+  color: var(--stellar);
+  margin-bottom: 1.5rem;
+}
+.section-divider {
+  width: 40px; height: 1px;
+  background: var(--accent);
+  margin: 1.5rem 0;
+  opacity: 0.4;
+}
+
+/* UNIVERSE DIAGRAM SECTION */
+.universe-section {
+  background: linear-gradient(to bottom, var(--void), var(--deep));
+}
+
+#universeDiagram {
+  width: 100%;
+  height: 420px;
+  display: block;
+}
+
+.diagram-legend {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* PAPERS SECTION */
+.papers-section {
+  background: linear-gradient(to bottom, var(--deep), var(--horizon));
+}
+
+.papers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.paper-card {
+  background: rgba(6,13,22,0.7);
+  border: 1px solid rgba(125,212,255,0.1);
+  border-radius: 4px;
+  padding: 1.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+  text-decoration: none;
+  display: block;
+}
+.paper-card:hover {
+  border-color: rgba(125,212,255,0.35);
+  transform: translateY(-3px);
+}
+.paper-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+.paper-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--stellar);
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+.paper-result {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--gold);
+  background: rgba(200,169,110,0.07);
+  border: 1px solid rgba(200,169,110,0.15);
+  padding: 0.4rem 0.7rem;
+  border-radius: 2px;
+  margin-bottom: 0.7rem;
+  line-height: 1.5;
+}
+.paper-desc {
+  font-size: 0.88rem;
+  color: var(--dim);
+  line-height: 1.6;
+}
+
+/* PREDICTIONS */
+.predictions-section {
+  background: var(--horizon);
+}
+.pred-table-wrap { margin-top: 2.5rem; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+thead th {
+  padding: 0.8rem 1.2rem;
+  text-align: left;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(125,212,255,0.2);
+}
+tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s; }
+tbody tr:hover { background: rgba(125,212,255,0.03); }
+tbody td { padding: 0.8rem 1.2rem; color: var(--dim); }
+tbody td:first-child { color: var(--stellar); font-weight: 500; }
+.badge {
+  display: inline-block;
+  padding: 0.12rem 0.55rem;
+  border-radius: 2px;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+.badge-green { background: rgba(100,220,150,0.1); color: #64dc96; border: 1px solid rgba(100,220,150,0.2); }
+.badge-yellow { background: rgba(200,169,110,0.1); color: var(--gold); border: 1px solid rgba(200,169,110,0.2); }
+
+/* FOOTER */
+footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 2rem;
+  text-align: center;
+  background: var(--void);
+}
+.footer-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: rgba(160,188,220,0.45);
+  text-transform: uppercase;
+}
+.footer-sep {
+  width: 1px;
+  height: 12px;
+  background: rgba(160,188,220,0.2);
+  margin: 0 1.2rem;
+}
+.footer-inner a {
+  color: rgba(125,212,255,0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.footer-inner a:hover { color: var(--accent); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .papers-grid { grid-template-columns: repeat(2, 1fr); }
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { gap: 1.2rem; }
+}
+@media (max-width: 600px) {
+  .papers-grid { grid-template-columns: 1fr; }
+  .hero-equations { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<nav>
+  <a class="nav-explore" href="#universe">↓ Start the Explore</a>
+  <ul class="nav-links">
+    <li><a href="#universe">Framework</a></li>
+    <li><a href="#papers">Papers</a></li>
+    <li><a href="#predictions">Predictions</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Holographic Dark Universe · London 2026</div>
+  <h1 class="hero-title">
+    What God Did Not<br>Need to <em>Tune</em>
+  </h1>
+  <p class="hero-subtitle">
+    Everything dark, written in π and e —
+    a parameter-free geometric framework deriving dark energy
+    and dark matter from the causal horizon of de Sitter spacetime.
+  </p>
+
+  <div class="hero-equations">
+    <div class="eq-card">
+      <div class="eq-label">Dark Energy</div>
+      <div class="eq-formula">Ω_Λ = π³ / (6e²)</div>
+      <div class="eq-value">≈ 0.6994 · PDG: 0.699 · 0.06%</div>
+    </div>
+    <div class="eq-card">
+      <div class="eq-label">Dark Matter</div>
+      <div class="eq-formula">Ω_DM = π⁴(√4π−e) / (6e⁴)</div>
+      <div class="eq-value">≈ 0.2458 · Planck: 0.260 · −5.46%</div>
+    </div>
+    <div class="eq-card">
+      <div class="eq-label">Dark Total</div>
+      <div class="eq-formula">Ω_Λ + Ω_DM ≈ 0.9452</div>
+      <div class="eq-value">observed 0.9594 · −1.48%</div>
+    </div>
+  </div>
+
+  <div class="zenodo-btn-wrap">
+    <a class="zenodo-btn" href="https://zenodo.org/records/19639260" target="_blank">
+      <span class="zenodo-btn-arrow">⬡</span>
+      Read the Papers on Zenodo
+      <span class="zenodo-btn-arrow">→</span>
+    </a>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    explore the framework
+  </div>
+</section>
+
+<!-- UNIVERSE DIAGRAM -->
+<section class="universe-section" id="universe">
+  <div class="container">
+    <div class="section-label reveal">The Complete Picture</div>
+    <h2 class="section-title reveal">From vacuum to dark matter —<br>one geometric constraint</h2>
+    <div class="section-divider reveal"></div>
+
+    <svg id="universeDiagram" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="horizonGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#7dd4ff" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#7dd4ff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="satGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c8a96e" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#c8a96e" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="dmGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#64dc96" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#64dc96" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="softglow">
+          <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background -->
+      <rect width="1000" height="420" fill="rgba(6,13,22,0.6)" rx="4"/>
+
+      <!-- Stage labels -->
+      <text x="167" y="32" font-family="JetBrains Mono" font-size="9" fill="rgba(125,212,255,0.5)" text-anchor="middle" letter-spacing="2">STABLE VACUUM</text>
+      <text x="500" y="32" font-family="JetBrains Mono" font-size="9" fill="rgba(200,169,110,0.7)" text-anchor="middle" letter-spacing="2">SUPERSATURATION  z≈0.35–1.72</text>
+      <text x="833" y="32" font-family="JetBrains Mono" font-size="9" fill="rgba(100,220,150,0.6)" text-anchor="middle" letter-spacing="2">DARK MATTER FORMED</text>
+
+      <!-- Stage dividers -->
+      <line x1="333" y1="45" x2="333" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="667" y1="45" x2="667" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- === STAGE 1: STABLE HORIZON === -->
+      <!-- Background glow -->
+      <ellipse cx="167" cy="220" rx="120" ry="120" fill="url(#horizonGlow)"/>
+
+      <!-- Horizon ring -->
+      <circle cx="167" cy="220" r="90" fill="none" stroke="rgba(125,212,255,0.5)" stroke-width="1.5" filter="url(#glow)"/>
+      <circle cx="167" cy="220" r="88" fill="none" stroke="rgba(125,212,255,0.15)" stroke-width="8"/>
+
+      <!-- C₀ label on ring -->
+      <text x="248" y="185" font-family="JetBrains Mono" font-size="10" fill="rgba(125,212,255,0.8)" filter="url(#glow)">C₀</text>
+
+      <!-- Vacuum modes dots inside -->
+      <g opacity="0.7">
+        <circle cx="167" cy="220" r="3" fill="#7dd4ff" filter="url(#glow)"/>
+        <circle cx="130" cy="200" r="2" fill="#7dd4ff" opacity="0.6"/>
+        <circle cx="200" cy="205" r="2" fill="#7dd4ff" opacity="0.6"/>
+        <circle cx="145" cy="245" r="2" fill="#7dd4ff" opacity="0.5"/>
+        <circle cx="190" cy="240" r="2" fill="#7dd4ff" opacity="0.5"/>
+        <circle cx="155" cy="185" r="1.5" fill="#7dd4ff" opacity="0.4"/>
+        <circle cx="185" cy="255" r="1.5" fill="#7dd4ff" opacity="0.4"/>
+        <circle cx="210" cy="225" r="1.5" fill="#7dd4ff" opacity="0.3"/>
+        <circle cx="125" cy="230" r="1.5" fill="#7dd4ff" opacity="0.3"/>
+        <circle cx="170" cy="175" r="1.5" fill="#7dd4ff" opacity="0.3"/>
+        <circle cx="170" cy="265" r="1.5" fill="#7dd4ff" opacity="0.3"/>
+      </g>
+
+      <!-- τ=1 label -->
+      <text x="167" y="340" font-family="JetBrains Mono" font-size="9" fill="rgba(125,212,255,0.5)" text-anchor="middle">τ = 1  ·  C(τ) = C₀</text>
+
+      <!-- Arrow right -->
+      <text x="290" y="225" font-family="JetBrains Mono" font-size="18" fill="rgba(200,169,110,0.4)" text-anchor="middle">→</text>
+      <text x="290" y="244" font-family="JetBrains Mono" font-size="8" fill="rgba(200,169,110,0.4)" text-anchor="middle">z↑ matter</text>
+
+      <!-- === STAGE 2: SUPERSATURATION === -->
+      <!-- Background glow orange -->
+      <ellipse cx="500" cy="220" rx="140" ry="140" fill="url(#satGlow)"/>
+
+      <!-- Horizon ring - stressed, deformed slightly -->
+      <circle cx="500" cy="220" r="95" fill="none" stroke="rgba(200,169,110,0.7)" stroke-width="2" filter="url(#softglow)"/>
+      <circle cx="500" cy="220" r="93" fill="none" stroke="rgba(200,169,110,0.2)" stroke-width="12"/>
+
+      <!-- C_sphere dashed ring -->
+      <circle cx="500" cy="220" r="78" fill="none" stroke="rgba(125,212,255,0.35)" stroke-width="1" stroke-dasharray="5,3"/>
+
+      <!-- Labels -->
+      <text x="596" y="185" font-family="JetBrains Mono" font-size="10" fill="rgba(200,169,110,0.9)" filter="url(#glow)">C(τ)&gt;C₀</text>
+      <text x="570" y="202" font-family="JetBrains Mono" font-size="8" fill="rgba(200,169,110,0.6)">1.467×C₀ peak</text>
+
+      <!-- C_sphere label -->
+      <text x="418" y="152" font-family="JetBrains Mono" font-size="8" fill="rgba(125,212,255,0.5)">C_sphere</text>
+
+      <!-- Overflow region between rings -->
+      <circle cx="500" cy="220" r="87" fill="none" stroke="rgba(200,169,110,0.08)" stroke-width="16"/>
+
+      <!-- Dense modes inside - crowded -->
+      <g filter="url(#glow)">
+        <circle cx="500" cy="220" r="4" fill="#c8a96e"/>
+        <circle cx="465" cy="200" r="3" fill="#c8a96e" opacity="0.8"/>
+        <circle cx="535" cy="205" r="3" fill="#c8a96e" opacity="0.8"/>
+        <circle cx="478" cy="248" r="3" fill="#c8a96e" opacity="0.7"/>
+        <circle cx="522" cy="242" r="3" fill="#c8a96e" opacity="0.7"/>
+        <circle cx="488" cy="182" r="2.5" fill="#c8a96e" opacity="0.6"/>
+        <circle cx="515" cy="260" r="2.5" fill="#c8a96e" opacity="0.6"/>
+        <circle cx="548" cy="225" r="2.5" fill="#c8a96e" opacity="0.5"/>
+        <circle cx="452" cy="228" r="2.5" fill="#c8a96e" opacity="0.5"/>
+        <circle cx="510" cy="188" r="2" fill="#c8a96e" opacity="0.5"/>
+        <circle cx="475" cy="260" r="2" fill="#c8a96e" opacity="0.4"/>
+        <circle cx="535" cy="255" r="2" fill="#c8a96e" opacity="0.4"/>
+        <circle cx="460" cy="190" r="2" fill="#c8a96e" opacity="0.4"/>
+      </g>
+
+      <!-- Overflow sparks escaping ring -->
+      <g filter="url(#glow)" opacity="0.8">
+        <circle cx="595" cy="220" r="2.5" fill="#c8a96e"/>
+        <circle cx="590" cy="200" r="2" fill="#c8a96e" opacity="0.7"/>
+        <circle cx="598" cy="240" r="1.8" fill="#c8a96e" opacity="0.6"/>
+        <circle cx="610" cy="215" r="1.5" fill="#c8a96e" opacity="0.5"/>
+        <circle cx="405" cy="215" r="2" fill="#c8a96e" opacity="0.6"/>
+        <circle cx="398" cy="235" r="1.5" fill="#c8a96e" opacity="0.5"/>
+      </g>
+
+      <text x="500" y="345" font-family="JetBrains Mono" font-size="9" fill="rgba(200,169,110,0.6)" text-anchor="middle">τ_min=0.808  ·  z≈0.898</text>
+      <text x="500" y="360" font-family="JetBrains Mono" font-size="8" fill="rgba(200,169,110,0.4)" text-anchor="middle">horizon overloaded · overflow begins</text>
+
+      <!-- Arrow right -->
+      <text x="624" y="225" font-family="JetBrains Mono" font-size="18" fill="rgba(100,220,150,0.4)" text-anchor="middle">→</text>
+      <text x="624" y="244" font-family="JetBrains Mono" font-size="8" fill="rgba(100,220,150,0.4)" text-anchor="middle">z↓ relax</text>
+
+      <!-- === STAGE 3: DARK MATTER === -->
+      <!-- Background glow green -->
+      <ellipse cx="833" cy="220" rx="130" ry="130" fill="url(#dmGlow)"/>
+
+      <!-- Horizon ring - back to stable, thinner -->
+      <circle cx="833" cy="220" r="80" fill="none" stroke="rgba(125,212,255,0.4)" stroke-width="1.5" filter="url(#glow)"/>
+      <circle cx="833" cy="220" r="78" fill="none" stroke="rgba(125,212,255,0.08)" stroke-width="6"/>
+
+      <!-- C₀ label -->
+      <text x="914" y="185" font-family="JetBrains Mono" font-size="10" fill="rgba(125,212,255,0.7)" filter="url(#glow)">C₀ restored</text>
+
+      <!-- Dark energy modes inside - sparse, stable -->
+      <g opacity="0.5">
+        <circle cx="833" cy="220" r="2.5" fill="#7dd4ff"/>
+        <circle cx="808" cy="208" r="1.8" fill="#7dd4ff"/>
+        <circle cx="855" cy="212" r="1.8" fill="#7dd4ff"/>
+        <circle cx="818" cy="235" r="1.8" fill="#7dd4ff"/>
+        <circle cx="848" cy="238" r="1.8" fill="#7dd4ff"/>
+      </g>
+
+      <!-- Dark matter particles scattered outside -->
+      <g filter="url(#glow)">
+        <!-- Particles outside the horizon ring -->
+        <circle cx="940" cy="170" r="3" fill="#64dc96" opacity="0.8"/>
+        <circle cx="955" cy="220" r="2.5" fill="#64dc96" opacity="0.7"/>
+        <circle cx="935" cy="268" r="2.8" fill="#64dc96" opacity="0.75"/>
+        <circle cx="720" cy="175" r="2.5" fill="#64dc96" opacity="0.65"/>
+        <circle cx="710" cy="220" r="3" fill="#64dc96" opacity="0.7"/>
+        <circle cx="725" cy="265" r="2.2" fill="#64dc96" opacity="0.6"/>
+        <circle cx="833" cy="130" r="2.5" fill="#64dc96" opacity="0.65"/>
+        <circle cx="833" cy="310" r="2.5" fill="#64dc96" opacity="0.65"/>
+        <!-- Connecting trails -->
+        <line x1="913" y1="220" x2="940" y2="170" stroke="rgba(100,220,150,0.2)" stroke-width="1"/>
+        <line x1="913" y1="220" x2="955" y2="220" stroke="rgba(100,220,150,0.15)" stroke-width="1"/>
+        <line x1="913" y1="220" x2="935" y2="268" stroke="rgba(100,220,150,0.2)" stroke-width="1"/>
+        <line x1="753" y1="220" x2="710" y2="220" stroke="rgba(100,220,150,0.15)" stroke-width="1"/>
+        <line x1="753" y1="220" x2="720" y2="175" stroke="rgba(100,220,150,0.15)" stroke-width="1"/>
+        <line x1="753" y1="220" x2="725" y2="265" stroke="rgba(100,220,150,0.15)" stroke-width="1"/>
+        <line x1="833" y1="140" x2="833" y2="130" stroke="rgba(100,220,150,0.15)" stroke-width="1"/>
+        <line x1="833" y1="300" x2="833" y2="310" stroke="rgba(100,220,150,0.15)" stroke-width="1"/>
+      </g>
+
+      <!-- Omega labels -->
+      <text x="833" y="345" font-family="JetBrains Mono" font-size="9" fill="rgba(125,212,255,0.5)" text-anchor="middle">Ω_Λ = 0.6994  (D=2 boundary)</text>
+      <text x="833" y="360" font-family="JetBrains Mono" font-size="9" fill="rgba(100,220,150,0.5)" text-anchor="middle">Ω_DM = 0.2458  (D=3 volume)</text>
+
+      <!-- Equation annotation -->
+      <text x="833" y="390" font-family="JetBrains Mono" font-size="8" fill="rgba(200,169,110,0.35)" text-anchor="middle">ΔC → π/e → dark matter</text>
+
+    </svg>
+
+    <!-- Legend -->
+    <div class="diagram-legend reveal">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#7dd4ff;"></div>
+        Causal horizon boundary (D=2) · dark energy
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#c8a96e;"></div>
+        Supersaturation overflow · C(τ) > C₀
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#64dc96;"></div>
+        Dark matter (D=3 volume) · Ω_DM = π⁴(√4π−e)/(6e⁴)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAPERS -->
+<section class="papers-section" id="papers">
+  <div class="container">
+    <div class="section-label reveal">Publication Series · Zenodo DOI 10.5281/zenodo.19425421</div>
+    <h2 class="section-title reveal">Four papers. One geometric origin.</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="papers-grid">
+      <a class="paper-card reveal" href="https://zenodo.org/records/19639260" target="_blank">
+        <div class="paper-num">Paper I</div>
+        <div class="paper-title">Holographic UV/IR Coupling and Dark Energy</div>
+        <div class="paper-result">C₀ = π²/(16e²) · Ω_Λ = π³/(6e²)</div>
+        <div class="paper-desc">First derivation of the CKN holographic coefficient. H₀ and G cancel exactly. Dark energy density is a pure geometric constant.</div>
+      </a>
+
+      <a class="paper-card reveal" href="https://zenodo.org/records/19639260" target="_blank">
+        <div class="paper-num">Paper II</div>
+        <div class="paper-title">Physical Interpretation of the Holographic Coefficient C</div>
+        <div class="paper-result">UV = π²/16 · IR = 1/e²</div>
+        <div class="paper-desc">C₀ identified as the fixed point of de Sitter spacetime. UV spherical phase space meets IR one-e-folding holography.</div>
+      </a>
+
+      <a class="paper-card reveal" href="https://zenodo.org/records/19639260" target="_blank">
+        <div class="paper-num">Paper III</div>
+        <div class="paper-title">From Casimir Cavities to the Cosmological Horizon</div>
+        <div class="paper-result">C(R,τ) = (π²/16)·(lP/R)²·e^(−2τ)</div>
+        <div class="paper-desc">One formula spanning 61 orders of magnitude. Parallel Casimir 0.00% deviation. f_EM = √(4π)/e derived from first principles.</div>
+      </a>
+
+      <a class="paper-card reveal" href="https://zenodo.org/records/19639260" target="_blank">
+        <div class="paper-num">Paper IV</div>
+        <div class="paper-title">Dark Matter from Holographic Supersaturation</div>
+        <div class="paper-result">Ω_DM = π⁴(√4π−e)/(6e⁴) ≈ 0.2458</div>
+        <div class="paper-desc">Overflow ΔC converts to dark matter via D=2→D=3 projection factor π/e. DESI DR2 and eBOSS fσ₈ consistent. Zero free parameters.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICTIONS -->
+<section class="predictions-section" id="predictions">
+  <div class="container">
+    <div class="section-label reveal">Observational Tests</div>
+    <h2 class="section-title reveal">Zero parameters. Eight predictions.</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="pred-table-wrap reveal">
+      <table>
+        <thead>
+          <tr>
+            <th>Observable</th>
+            <th>Framework</th>
+            <th>Observed</th>
+            <th>Deviation</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ω_Λ (dark energy)</td>
+            <td>π³/(6e²) ≈ 0.6994</td>
+            <td>0.699 (PDG)</td>
+            <td>0.06%</td>
+            <td><span class="badge badge-green">&lt;0.2σ</span></td>
+          </tr>
+          <tr>
+            <td>Ω_DM (dark matter)</td>
+            <td>π⁴(√4π−e)/(6e⁴) ≈ 0.2458</td>
+            <td>0.260 (Planck)</td>
+            <td>−5.46%</td>
+            <td><span class="badge badge-green">✓ 2σ</span></td>
+          </tr>
+          <tr>
+            <td>Ω_Λ + Ω_DM</td>
+            <td>≈ 0.9452</td>
+            <td>0.9594</td>
+            <td>−1.48%</td>
+            <td><span class="badge badge-green">✓ 1σ</span></td>
+          </tr>
+          <tr>
+            <td>H(z) at z ≈ 0.51</td>
+            <td>E = 1.4165</td>
+            <td>1.4426 ± 0.042 (DESI DR2)</td>
+            <td>−0.62σ</td>
+            <td><span class="badge badge-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>H(z) at z ≈ 0.71</td>
+            <td>E = 1.5824</td>
+            <td>1.5247 ± 0.033 (DESI DR2)</td>
+            <td>+1.75σ</td>
+            <td><span class="badge badge-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>H(z) at z ≈ 0.93</td>
+            <td>E = 1.7840</td>
+            <td>1.6927 ± 0.033 (DESI DR2)</td>
+            <td>+2.75σ</td>
+            <td><span class="badge badge-yellow">Supersaturation signal</span></td>
+          </tr>
+          <tr>
+            <td>fσ₈ at z ≈ 0.97</td>
+            <td>η = 0.889 → ~11% suppression</td>
+            <td>0.387 ± 0.047 (eBOSS DR16)</td>
+            <td>Consistent</td>
+            <td><span class="badge badge-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>Transition redshift z_trans</td>
+            <td>z_trans ∈ [0.671, 0.898]</td>
+            <td>z ≈ 0.67 (observed)</td>
+            <td>Within bounds</td>
+            <td><span class="badge badge-green">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span>Yiling Zhu</span>
+    <div class="footer-sep"></div>
+    <span>Independent Researcher · London · 2026</span>
+    <div class="footer-sep"></div>
+    <a href="mailto:wilsonzhuyiling@gmail.com">wilsonzhuyiling@gmail.com</a>
+    <div class="footer-sep"></div>
+    <a href="https://zenodo.org/records/19639260" target="_blank">DOI 10.5281/zenodo.19425421</a>
+    <div class="footer-sep"></div>
+    <span>© 2026 Yiling Zhu · CC BY 4.0</span>
+  </div>
+</footer>
+
+<script>
+// STARFIELD
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 220; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2,
+      alpha: Math.random() * 0.5 + 0.1,
+      pulse: Math.random() * Math.PI * 2
+    });
+  }
+}
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    s.pulse += 0.008;
+    const a = s.alpha * (0.7 + 0.3 * Math.sin(s.pulse));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232,240,250,${a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+window.addEventListener('resize', () => { resize(); initStars(); });
+resize(); initStars(); drawStars();
+
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
